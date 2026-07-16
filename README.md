@@ -1,11 +1,6 @@
 # track_Motion · Microsphere Detection & Motion Tracking
 
-A computer-vision project for **microsphere (micro-bead) targets**: it builds on YOLOv8 with a
-**color-attention mechanism** and a **scale-aware FPN**, enabling microsphere **detection, color
-recognition, and size measurement**, and ships a **Motion Tracker** (plus an optional **ByteTrack**
-tracker) that continuously follows microsphere trajectories in video and reports displacement and velocity.
 
-> Use cases: microsphere motion analysis under microscopes / industrial cameras, particle counting, and trajectory visualization.
 
 ---
 
@@ -27,6 +22,8 @@ tracker) that continuously follows microsphere trajectories in video and reports
   - Auto-detects dataset structure and generates a temp `data.yaml`; supports multi-scale / rectangular training.
 
 ---
+
+
 
 ## 📁 Project Structure
 
@@ -67,6 +64,8 @@ track_Motion/
 
 ---
 
+
+
 ## 🚀 Installation
 
 Requires **Python 3.9+**.
@@ -105,6 +104,8 @@ matplotlib
 
 ---
 
+
+
 ## 🎯 Quick Start
 
 ### 1. Prepare the dataset
@@ -139,6 +140,7 @@ python train.py \
 ```
 
 Key switches:
+
 - `--use-enhanced-model` enables the enhanced model; `--no-enhanced-model` reverts to base YOLOv8.
 - `--multi-scale` + `--rect` help with large size variance / varied aspect ratios.
 - Trained artifacts default to `runs/train/`.
@@ -170,6 +172,7 @@ python Tracker.py \
 ```
 
 Outputs (under `--output`):
+
 - `<video>_tracked.mp4` — tracked video with trajectories
 - `<video>_matching_areas.mp4` — matching-region visualization video
 - `<video>_results.csv` — per-track ID / class / duration (frames) / displacement / velocity
@@ -190,48 +193,7 @@ python Mutil_tracker.py \
 
 Produces `batch_processing_summary.txt` and (on failure) `batch_processing_errors.log`.
 
----
 
-## ⚙️ Configuration
-
-All defaults live in `config.py` and can be overridden by CLI arguments of the same name. Main blocks:
-
-| Block | Description |
-| --- | --- |
-| `MODEL_ENHANCEMENT` | Enable enhanced model / color attention / scale FPN |
-| `DATA_AUGMENTATION` | Augmentation switches & ranges (rotate, brightness, contrast, blur, noise, flip) |
-| `MODEL` | Baseline model name (`yolov8l.pt`), pretrained flag |
-| `TRAIN` / `VAL` | Train/val hyperparams (batch, epochs, img_size, optimizer, LR, multi-scale range, …) |
-| `PREDICT` | Inference defaults, sliding-window config |
-| `MICROSPHERE` | Color HSV thresholds, pixel-to-micron ratio `pixel_to_um_ratio`, size-measurement switch |
-| `POSTPROCESS` | CSV field order, statistics-plot switches |
-
-> `MICROSPHERE.pixel_to_um_ratio` converts pixel size to physical size (microns) — set it per your camera calibration.
-
----
-
-## 🧠 Tracking Algorithm
-
-- **MicroBeadTracker (default)**
-  1. Convert each frame's YOLO detections into a unified `detection` structure (bbox / confidence / class).
-  2. Filter detections inside the **disappear zone** (left-edge clutter).
-  3. Match "static detections" (very close to history) directly; then run **two matching rounds** for moving targets (normal frame, then lost frame with relaxed range/angle).
-  4. Use `AdaptiveMotionModel` to predict the next position and attempt recovery of lost targets within an expanded range.
-  5. Unmatched high-confidence detections in the **appear zone** become new tracks; outputs continuous trajectories, displacement, and velocity.
-- **ByteTrack**: standard ByteTrack association (`track_thresh` / `track_buffer` / `match_thresh`, …) wrapped in `bytetrack_tracker.py`.
-
----
-
-## 📊 Outputs
-
-| Type | Path | Content |
-| --- | --- | --- |
-| Trained weights | `runs/train/<exp>/weights/best.pt` | Best model |
-| Detection boxes/video | `prediction_results/<exp>/` | Images, MOT labels, CSV |
-| Tracked video | `tracking_results/` | `<video>_tracked.mp4`, `_matching_areas.mp4`, `_results.csv`, `_trajectories.png` |
-| Batch report | `tracking_results/` | `batch_processing_summary.txt`, `batch_processing_errors.log` |
-
----
 
 ## 📄 License
 

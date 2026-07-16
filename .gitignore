@@ -16,6 +16,9 @@ __pycache__/
 *.pyc
 .DS_Store
 
+# Project-internal memory / agent data (not part of the published repo)
+.workbuddy/
+
 # Result artifacts
 *.csv
 *.log
