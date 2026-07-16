@@ -1,0 +1,14 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+# 忽略图像数据集
+
+data/
+
+
+# 忽略模型文件
+*.pt
+*.onnx
+
+# 忽略日志和缓存
+logs/
+runs/
+__pycache__/
